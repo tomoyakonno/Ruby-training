@@ -3,20 +3,35 @@ class Csv
   require "csv"
   require "date"
   
+  # 曜日を定数として定義
+  DAY = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+  
+  
   def main
     puts "読み込むファイル名 例:timesheet201804.csv"
+    
+    # csvファイル名を入力させる
     csvfile = gets.chomp
     
-    time = {"Sun" => 0.0, "Mon" => 0.0, "Tue" => 0.0, "Wed" => 0.0, "Thu" => 0.0, "Fri" => 0.0, "Sat" => 0.0}
-    day = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    # 曜日ごとの合計時間を入れるための変数配列time
+    time = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     
-    csv_data = CSV.read(csvfile)
+    # 入力したcsvファイルを、一行目をヘッダーとして読み込み
+    csv_data = CSV.read(csvfile, headers: true)
     
-    csv_data.each_with_index do |data, n|
-      time[day[Date.parse(data[0]).wday]] += data[3].to_f if n != 0
+    # "勤務日"から曜日を読み取り、time内の曜日に応じた場所に"作業時間"を足す
+    csv_data.each do |data|
+      time[Date.parse(data["勤務日"]).wday] += data["作業時間"].to_f
     end
     
-    puts time
+    # 何日から何日までかを出力
+    puts "#{csv_data["勤務日"].last} ~ #{csv_data["勤務日"].first}"
+    
+    # 曜日を定数配列DAYから、時間を変数配列timeから出力
+    time.each_with_index do |m, n|
+      print DAY[n] + " "
+      puts m
+    end
   end
 end
 
