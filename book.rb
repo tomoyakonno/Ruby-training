@@ -49,14 +49,14 @@ class Book
   
   
   # bookの内、nameに"楽しい"が含まれるデータを表示するメソッド
-  # view_tableの条件部分を変えただけ
+  # view_tableの条件部分を変えただけだとエラーが出たので書式変更
   def select_data_name
     ret = []
     
     SQLite3::Database.open("book.db") do |db|
-      db.execute("SELECT * FROM book WHERE name LIKE "%楽しい%"") do |row|
-        ret << row.join(" | ")
-      end
+      db.execute(<<-SQL) do |row| ret << row.join(" | ") end
+        SELECT * FROM book WHERE name LIKE "%楽しい%"
+      SQL
     end
     
     return ret
